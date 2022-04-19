@@ -119,9 +119,10 @@ def get_ndimension(collection):
 
 # Class that defines the category of a dimension
 class JsonStatCategory:
-    def __init__(self,index,label):
+    def __init__(self, index, label, size):
         self.index = index
         self.label = label
+        self.size = size
 
 
 # Class that defines a dimension of a json-stat dataset
@@ -129,7 +130,7 @@ class JsonStatDimension:
     def __init__(self, name, label, category, role):
         self.name = name
         self.label = label
-        self.category = JsonStatCategory(category.index,category.label)
+        self.category = JsonStatCategory(category.index, category.label, category.size)
         self.role = role
 
 
@@ -211,7 +212,7 @@ def generate_index(dimension, size):
         i = 0
         for i in range(0, size):
             label[index[i]] = dimension.category(i).label
-    return index,label
+    return index, label
 
 
 # Normalizes the string to a valid attribute name
@@ -242,7 +243,8 @@ def generate_category(dimension):
     index, label = generate_index(dimension, size)
     print("index: ", index)
     print("label: ", label)
-    category = JsonStatCategory(index, label)
+    print("size: ", size)
+    category = JsonStatCategory(index, label, size)
     return category
 
 
@@ -271,6 +273,7 @@ def generate_status(collection):
         except:
             exit = True
     return i, status
+
 
 # Getting the size of the category of a given dimension
 def generate_value(collection):
@@ -302,17 +305,21 @@ def generate_object(url):
 
     value_size, value = generate_value(collection)
     setattr(dataset, 'value', value)
+    setattr(dataset, 'value_size', value_size)
     status_size, status = generate_status(collection)
     setattr(dataset, 'status', status)
+    setattr(dataset, 'status_size', status_size)
 
     print(dataset.comunidadesautonomasyprovincias.name)
     print(dataset.comunidadesautonomasyprovincias.role)
     print(dataset.comunidadesautonomasyprovincias.category.index)
+    print(dataset.comunidadesautonomasyprovincias.category.size)
     print(dataset.per.name)
     print(dataset.per.role)
     print("Value: ",dataset.value)
     print("Status: ",dataset.status)
     print(dataset.per.category.index)
+    print(dataset.per.category.size)
     print(dataset.dimensions)
     dataset.printed_dimensions
 

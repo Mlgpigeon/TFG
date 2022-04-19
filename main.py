@@ -126,12 +126,14 @@ class JsonStatCategory:
 
 # Class that defines a dimension of a json-stat dataset
 class JsonStatDimension:
-    def __init__(self, name, label,category):
+    def __init__(self, name, label, category, role):
         self.name = name
         self.label = label
         self.category = JsonStatCategory(category.index,category.label)
+        self.role = role
 
 
+# Class that defines a json-stat dataset
 class ProcJsonStatDataset:
 
     def __init__(self):
@@ -140,13 +142,14 @@ class ProcJsonStatDataset:
     # Returns a list of dimensions in the dataset
     @property
     def dimensions(self):
-        return self.__dict__.keys()
+        return self.__dict__.items()
 
     # Print all dimensions of the dataset
     @property
-    def print_dimensions(self):
-        for dimension in self.dimensions:
-            print(dimension)
+    def printed_dimensions(self):
+        print("Dimensions of dataset: ")
+        for key, value in self.dimensions:
+            print(key)
 
 
 # Getting the size of the category of a given dimension
@@ -162,6 +165,7 @@ def calculate_cat_size(dimension):
     return i
 
 
+# Checks if the dimension has an index
 def check_index(dimension):
     flag_index = False
     try:
@@ -175,6 +179,7 @@ def check_index(dimension):
     return flag_index
 
 
+# Checks if the dimension has a label
 def check_label(dimension):
     flag_label = False
     try:
@@ -188,6 +193,7 @@ def check_label(dimension):
     return flag_label
 
 
+# Generates an index and a label for a dimension category if they exist
 def generate_index(dimension, size):
     index = dict()
     label = dict()
@@ -208,25 +214,76 @@ def generate_index(dimension, size):
     return index,label
 
 
+# Normalizes the string to a valid attribute name
+def normalize_string(str):
+    print(str)
+
+    # Convert to lower case
+    lower_str = str.lower()
+    print(lower_str)
+
+    # remove all punctuation except words and space
+    no_punc_str = re.sub(r'[^\w\s]', '', lower_str)
+    print(no_punc_str)
+
+    # Removing possivle leadng and trailing whitespaces
+    no_trail_str= no_punc_str.strip()
+
+    # Replace white spaces with underscores
+    no_spaces_string = no_trail_str.replace(" ", "_")
+
+    return no_spaces_string
+
+
+# Generates the category for a dimension
 def generate_category(dimension):
     size = calculate_cat_size(dimension)
     print("Size of category: ", size)
-    index,label = generate_index(dimension, size)
+    index, label = generate_index(dimension, size)
     print("index: ", index)
     print("label: ", label)
     category = JsonStatCategory(index, label)
     return category
 
 
-def generate_dimensions(collection,size):
+# Generates the dimensions for a dataset
+def generate_dimensions(collection, size):
     i=0
     dimensions = []
-    #print(collection.dimension(0).category(0).index)
+    # print(collection.dimension(0).category(0).index)
     for i in range(0,size):
         category = generate_category(collection.dimension(i))
-        dimension = JsonStatDimension(collection.dimension(i).did, collection.dimension(i).label,category)
+        role = collection.dimension(i).role
+        dimension = JsonStatDimension(collection.dimension(i).did, collection.dimension(i).label, category, role)
         dimensions.append(dimension)
     return dimensions
+
+
+# Getting the size of the category of a given dimension
+def generate_status(collection):
+    exit = False
+    status=[]
+    i = 0
+    while not exit:
+        try:
+            status.append(collection.status(i))
+            i = i+1
+        except:
+            exit = True
+    return i, status
+
+# Getting the size of the category of a given dimension
+def generate_value(collection):
+    exit = False
+    value = []
+    i = 0
+    while not exit:
+        try:
+            value.append(collection.value(i))
+            i = i+1
+        except:
+            exit = True
+    return i, value
 
 
 # Generate an Object for every dimension
@@ -236,14 +293,28 @@ def generate_object(url):
     print(size)
     dataset = ProcJsonStatDataset()
     dimensions = generate_dimensions(collection,size)
+
     i=0
-    for i in range(0,size):
-        name = dimensions[i].name
+    for i in range(0, size):
+        name = normalize_string(dimensions[i].name)
         setattr(dataset, name, dimensions[i])
         print(getattr(dataset, name, 'No existe el atributo' + name))
 
+    value_size, value = generate_value(collection)
+    setattr(dataset, 'value', value)
+    status_size, status = generate_status(collection)
+    setattr(dataset, 'status', status)
 
-    #print(dataset.comunidadesautonomasyprovincias.category.label)
+    print(dataset.comunidadesautonomasyprovincias.name)
+    print(dataset.comunidadesautonomasyprovincias.role)
+    print(dataset.comunidadesautonomasyprovincias.category.index)
+    print(dataset.per.name)
+    print(dataset.per.role)
+    print("Value: ",dataset.value)
+    print("Status: ",dataset.status)
+    print(dataset.per.category.index)
+    print(dataset.dimensions)
+    dataset.printed_dimensions
 
 
 # Press the green button in the gutter to run the script.

@@ -1,0 +1,159 @@
+{ "version": "2.0",
+"class": "dataset",
+"label": "Estancia media por puntos turísticos",
+"note": [
+"Unidades:   Días",
+"En enero de 2012 se modifican los municipios que componen Rías Altas y Rías Baixas. "
+, " La información de años anteriores a 2013 para los puntos Fortuna y Motril está disponible en el apartado de \"Resultados anuales\"."
+, "Los datos de febrero del año 2021 y posteriores son provisionales."
+, "La entrada en vigor de la Orden SND/257/2020 de 19 de marzo ha motivado la suspensión de apertura al público de todos los alojamientos turísticos, quedando paralizada su actividad turística a partir del 26 de marzo. Como la recogida de información se ha realizado durante la primera quincena del mes de abril, con los establecimientos cerrados al público, la tasa de respuesta ha sido más baja de lo habitual. Por ello el INE ha considerado que los datos a nivel nacional y por comunidad autónoma tienen calidad suficiente para su difusión, mientras que la información a escala provincial y/o de zona y punto turístico no cumple el estándar mínimo de calidad para su difusión.\r\n"
+], 
+"source": "Instituto Nacional de Estadística. Encuesta de Ocupación en Campings. Ocupación en Campings",
+"link":{
+"alternate":[
+{
+"type": "text/html",
+"href": "https://www.ine.es/jaxiT3/Tabla.htm?t=2075&L=0"
+}
+]
+},
+"extension":{
+"license":"https://www.ine.es/ss/Satellite?c=Page&p=1254735849170&pagename=Ayuda%2FINELayout&cid=1254735849170&L=0"
+},
+"updated": "2022-05-04T09:00:00+0200",
+"id": ["puntosturisticos", "Per"],
+"size": [28, 1],
+"role": {
+"geo": ["puntosturisticos"],
+"time": ["Per"]},
+"value": [ 31.0, 
+5.48, 
+null, 
+null, 
+5.21, 
+2.2, 
+2.35, 
+3.96, 
+null, 
+4.35, 
+2.84, 
+4.09, 
+2.99, 
+4.11, 
+2.49, 
+null, 
+null, 
+2.33, 
+6.0, 
+3.52, 
+11.03, 
+null, 
+4.7, 
+null, 
+3.63, 
+4.57, 
+2.73, 
+6.95],
+"status": [ "P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P", 
+"P"],
+"dimension":{
+"puntosturisticos": {
+"label":"Puntos turísticos",
+"category":{ 
+"index":{
+"MUN_03031": 0,
+"MUN_C9": 1,
+"MUN_E4": 2,
+"MUN_M2": 3,
+"MUN_G7": 4,
+"MUN_M9": 5,
+"MUN_K4": 6,
+"MUN_N0": 7,
+"MUN_H5": 8,
+"MUN_I1": 9,
+"MUN_N1": 10,
+"MUN_N2": 11,
+"MUN_N3": 12,
+"MUN_N4": 13,
+"MUN_N5": 14,
+"MUN_Q6": 15,
+"MUN_N6": 16,
+"MUN_N7": 17,
+"MUN_G3": 18,
+"MUN_M0": 19,
+"MUN_D1": 20,
+"MUN_R1": 21,
+"MUN_G4": 22,
+"MUN_F7": 23,
+"MUN_N8": 24,
+"MUN_N9": 25,
+"MUN_K5": 26,
+"MUN_O0": 27},
+"label":{
+"MUN_03031": "Benidorm",
+"MUN_C9": "Campello, el",
+"MUN_E4": "Elche/Elx",
+"MUN_M2": "Villajoyosa/Vila Joiosa, la",
+"MUN_G7": "Mojácar",
+"MUN_M9": "Conil de la Frontera",
+"MUN_K4": "Tarifa",
+"MUN_N0": "Benicasim/Benicàssim",
+"MUN_H5": "Oropesa del Mar/Orpesa",
+"MUN_I1": "Peníscola/Peñíscola",
+"MUN_N1": "Blanes",
+"MUN_N2": "Castelló d'Empúries",
+"MUN_N3": "Castell-Platja d'Aro",
+"MUN_N4": "Sant Pere Pescador",
+"MUN_N5": "Torroella de Montgrí",
+"MUN_Q6": "Motril",
+"MUN_N6": "Isla Cristina",
+"MUN_N7": "Santiago-Pontones",
+"MUN_G3": "Marbella",
+"MUN_M0": "Vélez-Málaga",
+"MUN_D1": "Cartagena",
+"MUN_R1": "Fortuna",
+"MUN_G4": "Mazarrón",
+"MUN_F7": "Llanes",
+"MUN_N8": "Cambrils",
+"MUN_N9": "Mont-roig del Camp",
+"MUN_K5": "Tarragona",
+"MUN_O0": "Oliva"}
+}
+}
+,"Per": {
+"label":"Periodo",
+"category":{
+"index":{
+"2021M05" : 0},
+"label":{
+"2021M05" : "2021M05"}
+}
+}
+}
+}

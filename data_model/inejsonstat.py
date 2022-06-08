@@ -39,7 +39,7 @@ class IneJsonStat:
     def get_pandas_dataframe(self):
         return self.dataframe
 
-    def get_csv(self, file_name):
+    def save_csv(self, file_name):
         file_name = file_name + ".csv"
         df = self.json_data.to_data_frame()
         df.to_csv(file_name)
@@ -85,6 +85,46 @@ class IneJsonStat:
     def set_url(self, url):
         self.url = url
 
+        # Generate a dataset with dimensions and values
+
+    def generate_object2(self):
+        logger.info("IneJsonStat || Executing module [generate_object]")
+
+        json_data = self.json_data
+
+
+        self.set_json_data(json_data)
+        size = self.get_number_dimensions()
+        # print(size)
+
+        dataset = ProcJsonStatDataset()
+        dimensions = self.generate_dimensions(size)
+
+        for i in range(0, size):
+            name = util.normalize_string(dimensions[i].name)
+            self.dimensions_names.append(name)
+            self.dimensions_labels.append(dimensions[i].label)
+            setattr(dataset, name, dimensions[i])
+            # print(getattr(dataset, name, 'Attribute doesnt exist' + name))
+
+        value_size, value = self.generate_value()
+        setattr(dataset, 'value', value)
+        setattr(dataset, 'value_size', value_size)
+
+        status_size, status = self.generate_status()
+        setattr(dataset, 'status', status)
+        setattr(dataset, 'status_size', status_size)
+        setattr(dataset, 'dimension_names', self.dimensions_names)
+
+        # dataset.printed_dimensions()
+        # print_data(dataset)
+        self.set_dataset(dataset)
+        df = self.json_data.to_data_frame()
+        df["Status"] = self.dataset.status
+        self.dataframe = df
+        self.generate_enumerators()
+
+        return self.dataset
     # Generate a dataset with dimensions and values
     def generate_object(self):
         logger.info("IneJsonStat || Executing module [generate_object]")
@@ -344,7 +384,7 @@ class IneJsonStat:
             #print("Diccionario = ", dictionary.keys())
             enumerator = DimensionEnum('DynamicEnum', dictionary)
             ##print(enumerator.list())
-            dictionary_enumerator[a] = enumerator
+            dictionary_enumerator[dimension_enum_name] = enumerator
             dimension_dictionary[dimension_enum_name] = a
         enumerator_dimensions = EnumeratorHub('DynamicEnum', dimension_dictionary)
         #dictionary_enumerator["dimensions"] = enumerator_dimensions
@@ -353,7 +393,10 @@ class IneJsonStat:
         self.enumerator_hub = enumerator_dimensions
         self.dimensions_enum = dictionary_enumerator
 
-        return dictionary_enumerator, enumerator_dimensions
+        print("Lista de enumeradores ",self.dimensions_enum.keys())
+        for a in self.dimensions_enum.keys():
+            setattr(self.dataset, a, self.dimensions_enum[a])
+        setattr(self.dataset, "enumerator_hub", self.enumerator_hub)
 
     def query(self, **kwargs):
         columns = self.dimensions_labels + ["Status", "Value"]
@@ -370,7 +413,7 @@ class IneJsonStat:
                     for arg in kwargs[arg_l]:
                         string_aux1 = util.normalize_string(str(kwargs[arg_l]))
                         #print(arg)
-                        if str(arg) in self.dimensions_enum[str(arg_l)].list_labels():
+                        if str(arg) in self.dimensions_enum[str(arg_l).upper()].list_labels():
                             column = getattr(self.dataset, arg_l).label
                             query_values.append([column,str(arg)])
                         else:
@@ -383,7 +426,7 @@ class IneJsonStat:
 
                         columns.remove(string3)
 
-                    elif str(kwargs[arg_l]) in self.dimensions_enum[str(arg_l)].list_labels():
+                    elif str(kwargs[arg_l]) in self.dimensions_enum[str(arg_l).upper()].list_labels():
                         query_values.append([string3,str(kwargs[arg_l])])
 
                     else:

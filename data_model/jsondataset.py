@@ -6,18 +6,18 @@ class ProcJsonStatDataset:
         self.name = 'dataset'
 
     @property
-    def dimension_list(self):
+    def dimensions(self):
         return self.dimension_names
 
     # Returns a list of dimensions in the dataset
     @property
-    def callables(self):
+    def attributes(self):
         return self.__dict__.items()
 
     # Print all dimensions of the dataset
-    def print_callables(self):
-        print("Callables of dataset: ")
-        for key, value in self.callables:
+    def print_attributes(self):
+        print("Attributes of dataset: ")
+        for key, value in self.attributes:
             print(key)
 
 

@@ -37,7 +37,7 @@ if __name__ == "__main__":
 
     # Save as csv
     print("[4]-----------------------------------------------------------------------------")
-    ine.save_csv("examplecsv")
+    ine.save_csv("example")
 
     print("[5]-----------------------------------------------------------------------------")
     print("Dataset dimensions are: ", dataset.dimensions)
@@ -82,7 +82,7 @@ if __name__ == "__main__":
     print(dataset.COMUNIDADESAUTONOMASYPROVINCIAS.BADAJOZ.status_df())
 
     print("[16]-----------------------------------------------------------------------------")
-    # Las queries pueden llamarse con enumeradores o con labels
+    # Queries can be called with enums or strings as parameters
     df1 = ine.query(comunidadesautonomasyprovincias=dataset.COMUNIDADESAUTONOMASYPROVINCIAS.BADAJOZ)
     df2 = ine.query(comunidadesautonomasyprovincias="Badajoz")
 
@@ -90,12 +90,12 @@ if __name__ == "__main__":
     print(df2)
 
     print("[17]-----------------------------------------------------------------------------")
-    # Pueden desactivarse columnas
+    # Columns can be deactivated on the result
     df3 = ine.query(comunidadesautonomasyprovincias="no", status="NO")
     print(df3)
 
     print("[18]-----------------------------------------------------------------------------")
-    # Pueden darse varios colores por columnas
+    # There can be multiple values for a query
     df4 = ine.query(comunidadesautonomasyprovincias=[dataset.COMUNIDADESAUTONOMASYPROVINCIAS.BADAJOZ,
                                                      dataset.COMUNIDADESAUTONOMASYPROVINCIAS.GRANADA], status="NO")
     print(df4)

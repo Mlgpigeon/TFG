@@ -1,7 +1,6 @@
 from enum import Enum
-import pandas as pd
-from data_model.dimension_enum_dc import DimensionItem
 from data_model.jsonutil import JsonUtil as util
+
 
 class DimensionEnum(Enum):
     """
@@ -38,45 +37,19 @@ class DimensionEnum(Enum):
     def columns(self):
         return self.value.columns
 
-
-    def values(self, *value_list):
-        #2021M12
-        out_list = []
-        for value in value_list:
-            if type(value) is str:
-                normalized_value = util.normalize_string(value)
-            else:
-                normalized_value = value
-            list = self.value.values
-
-            for elem in list:
-                flag = False
-                print(elem)
-                for x in elem:
-                    if type(x) is str:
-                        objective = util.normalize_string(str(x))
-                    else:
-                        objective = x
-                    if normalized_value == objective:
-                        flag = True
-                if flag:
-                    out_list.append(elem)
-        return out_list
-
     def data_df(self):
         return self.value.dataframe
 
     def data(self, *value_list):
-        # 2021M12
         out_list = []
         for value in value_list:
             if type(value) is str:
                 normalized_value = util.normalize_string(value)
             else:
                 normalized_value = value
-            list = self.value.values
+            list_aux = self.value.values
 
-            for elem in list:
+            for elem in list_aux:
                 flag = False
                 print(elem)
                 for x in elem:

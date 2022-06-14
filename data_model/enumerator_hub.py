@@ -1,5 +1,5 @@
 from aenum import Enum
-from data_model.dimensionEnum import DimensionEnum
+
 
 class EnumeratorHub(Enum):
     """

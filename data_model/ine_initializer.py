@@ -5,7 +5,7 @@ from data_model.url_builder import UrlBuilder as url_build
 from data_model.jsonstatrequest import JsonStatRequest
 from data_model.languages_enum import LanguageEnum
 from data_model.target_enum import TargetEnum
-from data_model.jsonutil import JsonUtil
+
 
 class IneInitializer:
 

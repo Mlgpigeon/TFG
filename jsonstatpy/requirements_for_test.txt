@@ -1,0 +1,10 @@
+-r requirements.txt
+# ipython 5.x must be used for python < 3.3
+# ipython~=5; python_version < '3.3'
+# ipython~=6; python_version >= '3.3'
+
+httpretty ~= 0.8.14
+jsonschema ~= 2.6
+strict-rfc3339 ~= 0.7
+runipy ~= 0.1
+sure ~= 1.4

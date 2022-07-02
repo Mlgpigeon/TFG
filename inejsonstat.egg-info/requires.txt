@@ -1,0 +1,10 @@
+inejsonstat
+numpy
+requests
+terminaltables
+click
+cython
+pandas
+pyyaml
+unidecode
+datetime

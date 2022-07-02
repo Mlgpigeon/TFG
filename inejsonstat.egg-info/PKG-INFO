@@ -1,3 +1,15 @@
+Metadata-Version: 2.1
+Name: inejsonstat
+Version: 1.0.12
+Summary: Library to interact with the INE JSON-Stat API
+Home-page: https://github.com/Mlgpigeon/inejsonstat.git
+Author: Luis María Salete Cuartero
+Author-email: luismasc16@gmail.com
+License: MIT License
+Platform: UNKNOWN
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+
 inejsonstat.py
 ===========
 
@@ -33,7 +45,7 @@ Available languages:
 -'EN' (english)
 
 Available inputs:
-These are the ids of the tables you request, they can be found here for the spanish INE (Instituto Nacional de Estadística):
+These are the ids of the tables you request, they can be found here for the spanish INE (Instituto Nacional de EstadÃ­stica):
 
 https://www.ine.es/dyngs/INEbase/listaoperaciones.htm
 
@@ -46,3 +58,5 @@ If not left blank, it will give the terms of the requested table in:
 -date=YYYYMMDD (a given date)
 -date=YYYYMMDD&date=YYYYMMDD (a list of given dates)
 -date=YYYYMMDD:YYYYMMDD (a range of dates)
+
+

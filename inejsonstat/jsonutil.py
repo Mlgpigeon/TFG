@@ -1,6 +1,6 @@
 import logging
 import yaml
-import jsonstat
+from jsonstatpy import jsonstat
 import re
 import unidecode
 from inejsonstat.main_logger import logger

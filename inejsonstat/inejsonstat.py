@@ -12,6 +12,10 @@ from inejsonstat.main_logger import logger
 
 
 class IneJsonStat:
+    """
+    Class that manages and generates dynamically the different dimensions and the contained categories based on an
+    input JSON-stat file
+    """
     def __init__(self):
         self.json_data = None
         self.yaml_data = None
@@ -24,66 +28,51 @@ class IneJsonStat:
         self.enumerator_hub = None
         self.dimensions_enum = None
 
-    # Returns the dataset in pandas dataframe format
     def get_pandas_dataframe(self):
+        """Returns a dataframe representative of the JSON-stat file.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+
+                Returns
+                -------
+                A pandas dataframe reflecting the JSON-stat file.
+        """
         return self.dataframe
 
     def save_csv(self, file_name):
+        """Generates a CSV file representative of the JSON-stat file.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+                file_name : string
+        """
         file_name = file_name + ".csv"
         df = self.json_data.to_data_frame()
         df.to_csv(file_name)
+        logger.debug("Generated csv: " + file_name)
         print("Generated csv: " + file_name)
 
-    # Returns the dataset in json format
-    def get_json_data(self):
-        return self.json_data
+    def generate_object(self):
+        """Generates a ProcJsonStatDataset correlating to the JSON-stst file, containing the data relative to its
+            dimensions and categories.
 
-    # Sets the object's json_data attribute
-    def set_json_data(self, json_data):
-        self.json_data = json_data
+                Parameters
+                ----------
+                self : IneJsonStat
 
-    # Returns the configuration yaml contents
-    def get_yaml_data(self):
-        return self.yaml_data
-
-    # Sets the object's yaml_data attribute
-    def set_yaml_data(self, yaml_data):
-        self.yaml_data = yaml_data
-
-    # Returns the dataset object in format ProcJsonStatDataset
-    def get_dataset(self):
-        return self.dataset
-
-    # Sets the object's dataset attribute as a generated ProcJsonStatDataset object
-    def set_dataset(self, dataset):
-        self.dataset = dataset
-
-    # Returns the log file name
-    def get_log(self):
-        return self.log
-
-    # Sets the object's log attribute
-    def set_log(self, log):
-        self.log = log
-
-    # Returns the url of the json file
-    def get_url(self):
-        return self.url
-
-    # Sets the object's url attribute
-    def set_url(self, url):
-        self.url = url
-
-        # Generate a dataset with dimensions and values
-
-    def generate_object2(self):
+                Returns
+                -------
+                A ProcJsonStatDataset instance with all the data relative to the JSON-stat file in object format
+                """
         logger.info("IneJsonStat || Executing module [generate_object]")
 
         json_data = self.json_data
 
-        self.set_json_data(json_data)
+        self.json_data = json_data
         size = self.get_number_dimensions()
-        # print(size)
 
         dataset = ProcJsonStatDataset()
         dimensions = self.generate_dimensions(size)
@@ -93,7 +82,8 @@ class IneJsonStat:
             self.dimensions_names.append(name)
             self.dimensions_labels.append(dimensions[i].label)
             setattr(dataset, name, dimensions[i])
-            # print(getattr(dataset, name, 'Attribute doesnt exist' + name))
+
+        logger.debug("Dimensions generated")
 
         value_size, value = self.generate_value()
         setattr(dataset, 'value', value)
@@ -104,9 +94,7 @@ class IneJsonStat:
         setattr(dataset, 'status_size', status_size)
         setattr(dataset, 'dimension_names', self.dimensions_names)
 
-        # dataset.printed_dimensions()
-        # print_data(dataset)
-        self.set_dataset(dataset)
+        self.dataset = dataset
         df = self.json_data.to_data_frame()
         df["Status"] = self.dataset.status
         self.dataframe = df
@@ -116,7 +104,16 @@ class IneJsonStat:
 
     # Getting the number of dimensions
     def get_number_dimensions(self):
-        logger.info("IneJsonStat || Executing module [get_number_dimensions]")
+        """Calculates the number of dimensions in a JSON-stat file.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+
+                Returns
+                -------
+                Number of dimensions.
+        """
         exit_flag = False
         i = 0
         while not exit_flag:
@@ -132,7 +129,18 @@ class IneJsonStat:
         # Generates an index and a label for a dimension category if they exist
 
     def generate_index(self, dimension, size):
-        logger.info("IneJsonStat || Executing module [generate_index]")
+        """Generates 2 dictionaries representing the index and label from a dimension.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+                dimension : JsonStatDimension from the jsonstat.py library
+                size : int
+
+                Returns
+                -------
+                2 dictionaries representing the index and label from a dimension.
+        """
         index = dict()
         label = dict()
 
@@ -151,7 +159,17 @@ class IneJsonStat:
         # Generates the category for a dimension
 
     def generate_category(self, dimension):
-        logger.info("IneJsonStat || Executing module [generate_category]")
+        """Generates the categories from a dimension.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+                dimension : JsonStatDimension from the jsonstat.py library
+
+                Returns
+                -------
+                A category of a JsonStatDimension from the jsonstat.py library.
+        """
         size = self.calculate_category_size(dimension)
         logger.info("IneJsonStat || Size of category: " + str(size))
         print("Size of category: ", size)
@@ -167,9 +185,18 @@ class IneJsonStat:
         # Generates the dimensions for a dataset
 
     def generate_dimensions(self, size):
-        logger.info("IneJsonStat || Executing module [generate_dimensions]")
+        """Generates the dimensions from a JSON-stat file.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+                size : int
+
+                Returns
+                -------
+                A list of dimensions JsonStatDimension from the jsonstat.py library.
+        """
         dimensions = []
-        # print(collection.dimension(0).category(0).index)
         for i in range(0, size):
             category = self.generate_category(self.json_data.dimension(i))
             role = self.json_data.dimension(i).role
@@ -182,7 +209,16 @@ class IneJsonStat:
 
     @staticmethod
     def get_enum_status(status_in):
-        logger.info("IneJsonStat || Executing module [get_Enum_status]")
+        """Gets the value from a Status instance.
+
+                Parameters
+                ----------
+                status_in : Status
+
+                Returns
+                -------
+                The value of the given Status.
+        """
         status = Status.UNKNOWN
         if status_in == Status.D.name:
             status = Status.D.value
@@ -195,7 +231,16 @@ class IneJsonStat:
         # Generates the dataset
 
     def generate_status(self):
-        logger.info("IneJsonStat || Executing module [generate_status]")
+        """Generates a list of status from a JSON-stat file.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+
+                Returns
+                -------
+                The size of the list and the list.
+        """
         exit_flag = False
         status = []
         i = 0
@@ -213,7 +258,17 @@ class IneJsonStat:
         # Getting the values of the collection
 
     def generate_value(self):
-        logger.info("IneJsonStat || Executing module [generate_value]")
+        """Generates a list of values from a JSON-stat file.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+
+                Returns
+                -------
+                The size of the list and the list.
+        """
+
         exit_flag = False
         value = []
         i = 0
@@ -231,7 +286,16 @@ class IneJsonStat:
     @staticmethod
     # Getting the size of the category of a given dimension
     def calculate_category_size(dimension):
-        logger.info("IneJsonStat || Executing module [calculate_category_size]")
+        """Calculates the size of a category of a dimension.
+
+                Parameters
+                ----------
+                dimension : JsonStatDimension from the jsonstat.py library
+
+                Returns
+                -------
+                The size of the category
+        """
         exit_flag = False
         i = 0
         while not exit_flag:
@@ -248,7 +312,16 @@ class IneJsonStat:
     @staticmethod
     # Checks if the dimension has an index
     def check_index(dimension):
-        logger.info("IneJsonStat || Executing module [check_index]")
+        """Checks if a dimension has an index.
+
+            Parameters
+             ----------
+            dimension : JsonStatDimension from the jsonstat.py library
+
+            Returns
+            -------
+            A boolean indicating the existence or lack of.
+        """
         flag_index = False
         try:
             index = dimension.category(0).index
@@ -265,6 +338,16 @@ class IneJsonStat:
     @staticmethod
     # Checks if the dimension has a label
     def check_label(dimension):
+        """Checks if a dimension has a label.
+
+                Parameters
+                ----------
+                dimension : JsonStatDimension from the jsonstat.py library
+
+                Returns
+                -------
+                A boolean indicating the existence or lack of.
+        """
         logger.info("IneJsonStat || Executing module [check_label]")
         flag_label = False
         try:
@@ -280,34 +363,34 @@ class IneJsonStat:
         return flag_label
 
     def generate_enumerators(self):
+        """Generates enumerators corresponding to dimensions as EnumeratorHub and its label values as DimensionEnum.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+
+        """
         table = self.dataframe
-        # columns = table.columns.values
-        # print("Columnas = ",columns)
         enums = []
         dimension_dictionary = {}
         dictionary_enumerator = {}
 
         for a in self.dimensions_names:
-            # print("Nombre de dimension ",a)
             dimension = getattr(self.dataset, a)
             category = getattr(dimension, 'category')
             dimension_label = getattr(dimension, 'label')
-            # print("el label es ",dimension_label)
             label = getattr(category, 'label')
             values = list(label.values())
             dimension_enum_name = util.normalize_enum(a)
 
             dictionary = {}
             for value in values:
-                # print("Valor a analizar", value)
                 adapted_name = util.normalize_enum(value)
-                # print("Valor adaptado", adapted_name)
 
                 filtered_table = table.loc[table[dimension_label] == value]
-                filtered_table = filtered_table.dropna()
+                #filtered_table = filtered_table.dropna()
                 table2 = table[table.isin([value]).any(axis=1)].dropna()
                 indextable = table2.index.tolist()
-                # indextable2 = filtered_table.index.tolist()
                 statustable = []
 
                 for i in indextable:
@@ -326,21 +409,16 @@ class IneJsonStat:
 
                 adapted_name = util.check_repeated(adapted_name, enums)
                 enums.append(adapted_name)
-                # print("Adapted name = ", adapted_name)
-                # print(table2.columns)
+
                 tuplenamed = DimensionItem(adapted_name, value, table2.columns.values, table2, valuetable, statustable,
                                            data_list, value_list, status_list)
                 dictionary[adapted_name] = tuplenamed
-                # extend_enum(enumerator_aux, adapted_name, tuplenamed)
 
-            # print("Diccionario = ", dictionary.keys())
             enumerator = DimensionEnum('DynamicEnum', dictionary)
-            # print(enumerator.list())
+
             dictionary_enumerator[dimension_enum_name] = enumerator
             dimension_dictionary[dimension_enum_name] = a
         enumerator_dimensions = EnumeratorHub('DynamicEnum', dimension_dictionary)
-        # dictionary_enumerator["dimensions"] = enumerator_dimensions
-        # print(dictionary_enumerator.keys())
 
         self.enumerator_hub = enumerator_dimensions
         self.dimensions_enum = dictionary_enumerator
@@ -351,27 +429,29 @@ class IneJsonStat:
         setattr(self.dataset, "enumerator_hub", self.enumerator_hub)
 
     def query(self, **kwargs):
+        """Makes a query with arguments regarding dimensions, status and values in JSON-stat to the main dataset
+            and returns the filtered data.
+
+                Parameters
+                ----------
+                self : IneJsonStat
+                kwargs : Different named arguments regarding dimensions, status and values in JSON-stat
+                Returns
+                -------
+                A pandas dataframe filtered by the query parameters.
+        """
         columns = self.dimensions_labels + ["Status", "Value"]
         query_values = []
         for arg_l in kwargs:
-            # print(self.dimensions_names)
-            # print(self.dimensions_labels)
-
-            # print(self.dimensions_labels)
-
             if arg_l in self.dimensions_names:
                 if isinstance(kwargs[arg_l], list):
-                    # print("es una lista")
                     for arg in kwargs[arg_l]:
-                        # string_aux1 = util.normalize_string(str(kwargs[arg_l]))
-                        # print(arg)
                         if str(arg) in self.dimensions_enum[str(arg_l).upper()].list_labels():
                             column = getattr(self.dataset, arg_l).label
                             query_values.append([column, str(arg)])
                         else:
                             print("Invalid dimension value")
                 else:
-                    # print("es una variable")
                     string_aux = util.normalize_string(str(kwargs[arg_l]))
                     string3 = str(getattr(self.dataset, arg_l).label)
                     if string_aux == "no":
@@ -392,21 +472,16 @@ class IneJsonStat:
                 string = util.normalize_string(str(kwargs[arg_l]))
                 if string == "no":
                     columns.remove("Status")
-        # print(columns)
-        # print(query_values)
+
         df = self.dataframe[columns]
         list_aux = []
         if len(query_values) > 0:
             for i in query_values:
-                # print(i[0])
-                # print(i[1])
+
                 df2 = df.loc[df[i[0]] == i[1]]
                 list_aux.append(df2)
             df_out = pd.concat(list_aux, join="inner")
         else:
             df_out = df
-        # print(len(list_aux))
-        # elif len(list_aux) == 1:
-        #    df_out = list_aux[0]
-        # else:
+
         return df_out

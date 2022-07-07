@@ -1,13 +1,13 @@
-import logging
-import yaml
-from jsonstatpy import jsonstat
-import re
-import unidecode
-from inejsonstat.main_logger import logger
 import datetime
+import logging
 import os
 import pathlib
-import doctest
+import re
+
+import unidecode
+import yaml
+
+from inejsonstat.main_logger import logger
 
 
 class JsonUtil:
@@ -15,13 +15,16 @@ class JsonUtil:
     @staticmethod
     # Reads the config yaml file
     def read_config_yaml(input_yaml):
-        '''
-        Reads the config.yaml file as parameter input and returns the data on it.
+        """Reads an input yaml file
 
+                Parameters
+                ----------
+                input_yaml : yaml
 
-        :param input_yaml:
-        :return yaml_data:
-        '''
+                Returns
+                -------
+               The data contained in the yaml
+        """
         with open(input_yaml, "r") as yaml_file:
             logger.debug("JsonUtil || Opening yaml file")
             logger.debug("JsonUtil || Reading yaml file")
@@ -30,34 +33,33 @@ class JsonUtil:
         return yaml_data
 
     @staticmethod
-    # Parameters from config
-    def read_yaml_parameters(yaml_data):
-
-        language = yaml_data[0]['Details']['language']
-        input_table = yaml_data[0]['Details']['input']
-        nult = yaml_data[0]['Details']['nult']
-        date = yaml_data[0]['Details']['date']
-
-        return language, input_table, nult, date
-
-    @staticmethod
-    # Reads the json_file from an input url
-    def read_json_file(input_url):
-        try:
-            json_data = (jsonstat.from_url(input_url))
-        except Exception as e:
-            logging.debug("Error reading json file: %s", e)
-            return False
-        return True, json_data
-
-    @staticmethod
     # Checks if the input is an integer
     def check_int(input_int):
+        """Checks if an input is an integer
+
+                Parameters
+                ----------
+                input_int : string
+
+                Returns
+                -------
+                Boolean indicating if its an integer
+        """
         return input_int.isdigit()
 
     @staticmethod
     # Normalizes the string to a valid attribute name
     def normalize_string(input_str):
+        """Normalizes a string
+
+                Parameters
+                ----------
+                input_str : string
+
+                Returns
+                -------
+               Normalized string
+        """
         logging.info("Executing module [normalize_string]")
         if input_str[0].isdigit():
             input_str = "n" + input_str
@@ -80,6 +82,16 @@ class JsonUtil:
     @staticmethod
     # Normalizes the string to a valid attribute name
     def normalize_enum(input_str):
+        """Normalizes a string to be an Enum name
+
+                Parameters
+                ----------
+                input_str : string
+
+                Returns
+                -------
+               Normalized string
+        """
         logging.info("Executing module [normalize_enum]")
         if input_str[0].isdigit():
             input_str = "n" + input_str
@@ -101,13 +113,24 @@ class JsonUtil:
 
     @staticmethod
     def check_repeated(input_string, input_list):
+        """Checks if an input string is in an input list and if so, modifies it
+
+                Parameters
+                ----------
+                input_string : string
+                input_list : [string]
+
+                Returns
+                -------
+               Modified string
+        """
         out_string = input_string
         aux_string = input_string
         i = 1
         flag = True
         while flag:
             if aux_string in input_list:
-                aux_string ="N"+ str(i) + out_string
+                aux_string = "N" + str(i) + out_string
             else:
                 flag = False
                 out_string = aux_string
@@ -116,6 +139,17 @@ class JsonUtil:
 
     @staticmethod
     def date_conversor(input_date, datetype: str = None):
+        """Converts the input date in a valid format to build the url
+
+                Parameters
+                ----------
+                input_date : string or date from datetime
+                datetype : string
+
+                Returns
+                -------
+               Modified string
+        """
         date = None
         if type(input_date) == datetime.date:
             logger.debug("Date is a datetime.date")
@@ -124,7 +158,7 @@ class JsonUtil:
             logger.debug("Date is a string")
             flag = JsonUtil.check_date(input_date)
             if flag:
-                input_date=input_date.replace('&', "&date=")
+                input_date = input_date.replace('&', "&date=")
                 date = input_date
             else:
                 logger.debug("Wrong date string format")
@@ -133,12 +167,12 @@ class JsonUtil:
             logger.debug("Date is a list")
             if datetype == "range":
                 aux_date = []
-                for i in range(0,2):
+                for i in range(0, 2):
                     aux_date.append(JsonUtil.date_conversor(input_date[i]))
                 if aux_date[0] < aux_date[1]:
-                  date = aux_date[0] + ":" + aux_date[1]
+                    date = aux_date[0] + ":" + aux_date[1]
                 else:
-                  date = aux_date[1] + ":" + aux_date[0]
+                    date = aux_date[1] + ":" + aux_date[0]
 
             elif datetype == "list":
                 logger.info("Correct date type")
@@ -153,12 +187,31 @@ class JsonUtil:
 
     @staticmethod
     def transform_date_format(input_date: datetime.date):
+        """Converts the input date in a valid format to build the url
+
+                Parameters
+                ----------
+                input_date : date from datetime
+
+                Returns
+                -------
+               String from the time
+        """
         return input_date.strftime("%Y%m%d")
 
     @staticmethod
     # Checks if there's a date parameter in the config file and if it matches the allowed formats
     def check_date(date):
-        logger.info("UrlBuilder || Executing module [check_date]")
+        """Checks the format of a input date
+
+                Parameters
+                ----------
+                date : string
+
+                Returns
+                -------
+               Boolean denoting if its correct and modified string
+        """
         flag_date = False
         if date == '':
             logger.debug("UrlBuilder || Module [check_date], No date parameter")
@@ -188,11 +241,24 @@ class JsonUtil:
         return flag_date, date
 
     @staticmethod
-    def file_name_builder(target: str = None, language: str = None, date: str = None, nult = None):
+    def file_name_builder(target: str = None, language: str = None, date: str = None, nult=None):
+        """Builds file name for cache management
+
+                Parameters
+                ----------
+                target : string
+                language : string
+                date : string
+                nult : string
+
+                Returns
+                -------
+               Generated file name
+        """
         file_name = target + "_" + language
         if date is not None:
             date = date.replace(":", "_")
-            date = date.replace('date=','')
+            date = date.replace('date=', '')
             file_name = file_name + "_" + date
         if nult is not None:
             file_name = file_name + "_" + str(nult)
@@ -200,8 +266,14 @@ class JsonUtil:
 
     @staticmethod
     def get_ttl():
-        config_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "config_files"))
-        yaml = JsonUtil.read_config_yaml(config_path+"\config.yaml")
+        """Gets the value of the cache time to live
+                Returns
+                -------
+               Generated time to live as numeric
+        """
+        config_path = os.path.abspath(os.path.join(os.path.dirname(__file__)))
+        path = os.path.join(config_path, "config.yaml")
+        yaml = JsonUtil.read_config_yaml(path)
         ttl_raw = yaml[0]['Details']['ttl']
         pattern_year = r"\b[yY][0-9]{1,2}\Z"
         matcher_year = re.compile(pattern_year)
@@ -234,10 +306,15 @@ class JsonUtil:
 
     @staticmethod
     def rename_old_file(file_name):
+        """Renames a given file from cache once its time is up
+
+                Parameters
+                ----------
+                file_name : string
+        """
         old, extension = os.path.splitext(file_name)
         time = pathlib.Path(file_name).stat().st_mtime
         dt = datetime.datetime.fromtimestamp(time)
         dtt = dt.strftime("%Y_%m_%d_%H_%M")
         new = old + "_OLD_" + dtt + extension
         os.rename(file_name, new)
-

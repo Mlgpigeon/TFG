@@ -1,11 +1,29 @@
-from inejsonstat.jsonutil import JsonUtil as util
-from inejsonstat.main_logger import logger
 from inejsonstat.jsonstatrequest import JsonStatRequest
+from inejsonstat.jsonutil import JsonUtil as util
 from inejsonstat.languages_enum import LanguageEnum
+from inejsonstat.main_logger import logger
 from inejsonstat.target_enum import TargetEnum
+
+"""
+Initializes the library by creating request objects as instances of JsonStatRequest
+"""
 
 
 def create(target=None, language=None, date: str = None, datetype: str = None, nult=None):
+    """Returns a dataframe representative of the JSON-stat file.
+
+            Parameters
+            ----------
+            target : string or TargetEnum
+            language : string or LanguageEnum
+            date : string or date from datetime
+            datetype : string
+            nult  : string or int
+
+            Returns
+            -------
+            A JsonStatRequest with the not None parameters initialized internally.
+    """
     if target is not None:
         if type(target) is TargetEnum:
             print("Target is enum")
@@ -35,5 +53,3 @@ def create(target=None, language=None, date: str = None, datetype: str = None, n
     request = JsonStatRequest(target_in, language_in, date_in, nult_in)
 
     return request
-
-

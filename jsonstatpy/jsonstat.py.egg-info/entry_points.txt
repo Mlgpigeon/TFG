@@ -1,3 +1,0 @@
-[console_scripts]
-jsonstat = jsonstat.cli.cli_jsonstat:cli
-

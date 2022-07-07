@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: inejsonstat
-Version: 1.0.12
+Version: 1.0.18
 Summary: Library to interact with the INE JSON-Stat API
 Home-page: https://github.com/Mlgpigeon/inejsonstat.git
 Author: Luis María Salete Cuartero

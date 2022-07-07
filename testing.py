@@ -12,9 +12,14 @@ if __name__ == "__main__":
     ine = ine_init.create()
 
     # Example with written date and language
-    ine.do_request(target='2074', language='ES', date=date, datetype="range")
+    json_data = ine.do_request(target='2065', language='ES', date=date, datetype="range")
+    dataset = ine.generate_dataset(json_data)
+    df = ine.get_dataframe()
+    print(df)
+
     print("From the url:", ine.last_url)
-    ine.do_request(target=ine.targets.N2065, language=ine.languages.EN, date="20210501:20210601")
+    json_data = ine.do_request(target=ine.targets.N2065, language=ine.languages.EN, date="20210501:20210601")
+
     print("From the url:", ine.last_url)
 
     # Example of ranged date
@@ -24,7 +29,7 @@ if __name__ == "__main__":
     # Main example
     # Get the json_stat data
     print("[1]-----------------------------------------------------------------------------")
-    json_data = ine.do_request(target=ine.targets.N2074, language=ine.languages.ES, date=[date, date2,date3],
+    json_data = ine.do_request(target=ine.targets.N2074, language=ine.languages.ES, date=[date, date2, date3],
                                datetype="list")
     print("The Json data is:")
     print(json_data)

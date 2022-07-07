@@ -1,21 +1,21 @@
-import jsonstat
-
-from inejsonstat.languages_enum import LanguageEnum
-from inejsonstat.target_enum import TargetEnum
-from inejsonstat.jsonutil import JsonUtil as util
-from inejsonstat.inejsonstat import IneJsonStat
-from enum import Enum
-from inejsonstat.main_logger import logger
-from inejsonstat.url_builder import UrlBuilder as url_build
-import json
-from urllib.request import urlopen
+import datetime
 import os
 import pathlib
-import datetime
+
+import jsonstatpy
+from inejsonstat.inejsonstat import IneJsonStat
+from inejsonstat.jsonutil import JsonUtil as util
+from inejsonstat.languages_enum import LanguageEnum
+from inejsonstat.main_logger import logger
+from inejsonstat.target_enum import TargetEnum
+from inejsonstat.url_builder import UrlBuilder as url_build
 
 
 class JsonStatRequest:
-
+    """
+    Class that manages the execution of requests and generation of a ProcJsonStatDataset through the generation of a
+    IneJsonStat instance
+    """
     def __init__(self, target: str = None, language: str = None, date: str = None, nult: int = None):
         self.target = target
         self.language = language
@@ -23,11 +23,27 @@ class JsonStatRequest:
         self.nult = nult
         self.languages = LanguageEnum
         self.targets = TargetEnum
-        self.Ine= None
+        self.Ine = None
         self.last_url = None
 
-    def do_request(self, target: str = None, language: str = None, date: str = None, datetype: str = None, nult= None):
+    def do_request(self, target: str = None, language: str = None, date: str = None, datetype: str = None, nult=None):
+        """Checks the parameters through JsonUtil and prepares them to build an URL or check its existence in cache.
 
+            Parameters
+            ----------
+            self : JsonStatRequest
+            target : string or TargetEnum
+            language : string or LanguageEnum
+            datetype : string
+            date : string or date from datetime
+            nult  : string or int
+
+            Returns
+            -------
+            A JsonStatDataSet from the jsonstat.py library reflecting the recovered data.
+        """
+        date_url = ""
+        nult_url = ""
         if target is not None:
             if type(target) is TargetEnum:
                 logger.debug("Target is enum")
@@ -76,11 +92,27 @@ class JsonStatRequest:
         else:
             raise Exception("Couldn't retrieve json data")
 
-    def make_request(self, target: str = None, language: str = None, date: str = None, nult= None):
+    def make_request(self, target: str = None, language: str = None, date: str = None, nult=None):
+        """Executes the request of the file either by recovering it from cache if it exists or through UrlBuilder if
+            contact with the API its needed.
+
+                Parameters
+                ----------
+                self : JsonStatRequest
+                target : string
+                language : string
+                date : string
+                nult  : string
+
+                Returns
+                -------
+                A boolean flag if the file has been recovered correctly and a JsonStatDataSet
+                from the jsonstat.py library reflecting the recovered data.
+                """
         flag_working = False
         file_name = util.file_name_builder(target, language, date, nult)
-        cache_path = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, "cache"))
-        path = cache_path + "/" + file_name + ".json"
+        cache_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "cache"))
+        path = os.path.join(cache_path, file_name + ".json")
         valid = False
         # check if file exists
         if os.path.isfile(path):
@@ -91,33 +123,73 @@ class JsonStatRequest:
             now = datetime.datetime.now()
             ttl = util.get_ttl()
 
-            if (now-dt).total_seconds() > ttl:
+            if (now - dt).total_seconds() > ttl:
                 logger.debug("File is older than ttl")
                 util.rename_old_file(path)
                 valid = False
             else:
-                json_data = jsonstat.from_file(path)
+                json_data = jsonstatpy.from_file(path)
                 valid = True
 
         if valid is False:
-            flag_working, json_data,url = url_build.build_url(target, language, date, nult)
+            flag_working, json_data, url = url_build.build_url(target, language, date, nult)
             self.last_url = url
         return flag_working, json_data
 
     def get_dataframe(self):
+        """Returns a dataframe representative of the JSON-stat file through the internal IneJsonStat instance.
+
+                Parameters
+                ----------
+                self : JsonStatRequest
+
+                Returns
+                -------
+                A pandas dataframe reflecting the JSON-stat file.
+        """
         if self.Ine is not None:
             return self.Ine.get_pandas_dataframe()
 
-    def save_csv(self,file_name):
+    def save_csv(self, file_name):
+        """Generates a CSV file representative of the JSON-stat file through the internal IneJsonStat instance.
+
+                Parameters
+                ----------
+                self : JsonStatRequest
+                file_name : string
+        """
         if self.Ine is not None:
             self.Ine.save_csv(file_name)
 
-    def generate_dataset(self,json_data):
+    def generate_dataset(self, json_data):
+        """Initializes the IneJsonStat internal attribute and generates the ProcJsonStatDataset object representing
+            the JSON-stat file.
+
+            Parameters
+            ----------
+            self : JsonStatRequest
+            json_data : JsonStatDataSet from the jsonstat.py library
+
+            Returns
+            -------
+            A ProcJsonStatDataset reflecting the JSON-stat file.
+        """
         ine = IneJsonStat()
-        ine.set_json_data(json_data)
-        dataset = ine.generate_object2()
+        ine.json_data = json_data
+        dataset = ine.generate_object()
         self.Ine = ine
         return dataset
 
-    def query(self,**kwargs):
+    def query(self, **kwargs):
+        """Makes a query with arguments regarding dimensions, status and values in JSON-stat to the main dataset
+            and returns the filtered data.
+
+                Parameters
+                ----------
+                self : JsonStatRequest
+                kwargs : Different named arguments regarding dimensions, status and values in JSON-stat
+                Returns
+                -------
+                A pandas dataframe filtered by the query parameters.
+        """
         return self.Ine.query(**kwargs)

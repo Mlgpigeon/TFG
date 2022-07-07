@@ -5,6 +5,7 @@ terminaltables
 click
 cython
 pandas
+aenum
 pyyaml
 unidecode
 datetime

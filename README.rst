@@ -27,18 +27,21 @@ or contact me directly in case of doubt or need via **luismasc16@gmail.com**.
 >>> pip install inejsonstat
 ```
 
+## Usage of the INE JSON-stat API:
 
-Available languages:
--'ES' (spanish)
--'EN' (english)
+The INE provides their data in two languages:
+*'ES' (spanish)
+*'EN' (english)
 
-Available inputs:
-These are the ids of the tables you request, they can be found here for the spanish INE (Instituto Nacional de Estadística):
+The INE provides table identifiers  for any kind of request,
+which are used for the library as inputs
+and can be found here:
 
 https://www.ine.es/dyngs/INEbase/listaoperaciones.htm
 
-Optional nult:
-If not left blank, it will give the n last terms of the requested table
+The INE provides an optional parameter called nult which if not left blank,
+it will return only the n, being n an integer, the last terms of the
+requested table
 
 Optional date:
 If not left blank, it will give the terms of the requested table in:

@@ -2,7 +2,10 @@ import enum
 
 
 class Status(enum.Enum):
-   D = "Definitive"
-   P = "Provisional"
-   E = "Estimated"
-   UNKNOWN = "Unknown"
+    """
+    Enumerator that represents the different status values defined on the INE API.
+    """
+    D = "Definitive"
+    P = "Provisional"
+    E = "Estimated"
+    UNKNOWN = "Unknown"
